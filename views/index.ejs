@@ -1,0 +1,29 @@
+vss<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome to the Web App!</h1>
+
+    <!-- Navigation based on login status -->
+    <% if (isAuthenticated) { %>
+      <p>Hello, <%= username %>!</p>
+      <a href="/profile">Go to your profile</a>
+      <form action="/auth/logout" method="POST">
+        <!-- CSRF Token -->
+        <% if (csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% } %>
+        <button type="submit">Logout</button>
+      </form>
+    <% } else { %>
+      <p>Please <a href="/auth/login">Login</a> or <a href="/auth/register">Register</a> to continue.</p>
+    <% } %>
+  </div>
+</body>
+</html>
