@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Welcome, <%= username %>!</h1>
+
+    <!-- User Details -->
+    <div class="profile-details">
+      <h2>Your Details</h2>
+      <p><strong>Username:</strong> <%= username %></p>
+      <p><strong>Email:</strong> <%= email %></p>
+      <p><strong>Account Created:</strong> <%= createdAt %></p>
+    </div>
+
+    <!-- User Messages -->
+    <% if (messages && messages.length > 0) { %>
+      <div class="user-messages">
+        <h2>Your Messages</h2>
+        <ul>
+          <% messages.forEach((message) => { %>
+            <li><strong><%= message.created_at %>:</strong> <%= message.content %></li>
+          <% }) %>
+        </ul>
+      </div>
+    <% } else { %>
+      <p>You have no messages yet.</p>
+    <% } %>
+
+    <!-- Form to Add a Message -->
+    <div class="add-message">
+      <h2>Add a Message</h2>
+      <form action="/messages" method="POST">
+        <!-- CSRF Token -->
+        <% if (csrfToken) { %>
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <% } %>
+        <textarea name="content" rows="4" placeholder="Write your message here..." required></textarea>
+        <button type="submit">Submit</button>
+      </form>
+    </div>
+
+    <!-- Logout Button -->
+    <form action="/auth/logout" method="POST">
+      <!-- CSRF Token -->
+      <% if (csrfToken) { %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% } %>
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+</body>
+</html>
