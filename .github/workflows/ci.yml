@@ -82,7 +82,7 @@ jobs:
         with:
           target: 'http://localhost:3000'
           report: true
-          format: 'html'
+         format: 'html'
       - name: Save ZAP Reports
         run: |
           mkdir -p zap-reports

@@ -5,12 +5,16 @@
     "main": "server.js",
     "scripts": {
         "start": "node server.js",
-        "db:init": "sqlite3 db/app.db < db/schema.sql"
+        "db:init": "sqlite3 db/app.db < db/schema.sql",
+        "test": "jest --coverage"
     },
     "dependencies": {
         "bcryptjs": "^2.4.3",
         "express": "^4.17.1",
         "express-session": "^1.18.1",
         "sqlite3": "^5.0.2"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
     }
 }
