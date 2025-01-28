@@ -4,14 +4,13 @@
     "description": "A secure web app to demo CI/CD pipeline tools.",
     "main": "server.js",
     "scripts": {
-      "start": "node server.js",
-      "db:init": "sqlite3 db/app.db < db/schema.sql"
+        "start": "node server.js",
+        "db:init": "sqlite3 db/app.db < db/schema.sql"
     },
     "dependencies": {
-      "bcryptjs": "^2.4.3",
-      "express": "^4.17.1",
-      "express-session": "^1.17.3",
-      "sqlite3": "^5.0.2"
+        "bcryptjs": "^2.4.3",
+        "express": "^4.17.1",
+        "express-session": "^1.18.1",
+        "sqlite3": "^5.0.2"
     }
-  }
-  
+}
