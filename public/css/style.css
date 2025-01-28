@@ -1,0 +1,138 @@
+/* General Reset */
+body, h1, h2, h3, p, ul, ol, li, form, input, button, a {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body Styling */
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    line-height: 1.6;
+    padding: 20px;
+  }
+  
+  /* Container */
+  .container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Headings */
+  h1, h2 {
+    margin-bottom: 20px;
+    color: #444;
+    text-align: center;
+  }
+  
+  /* Paragraphs */
+  p {
+    margin-bottom: 15px;
+    font-size: 16px;
+  }
+  
+  /* Links */
+  a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Form Styling */
+  form {
+    margin-top: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+  }
+  
+  input, textarea, button {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  textarea {
+    resize: none;
+  }
+  
+  button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Error Message Styling */
+  .error {
+    color: #d9534f;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  /* Success Message Styling */
+  .success {
+    color: #5cb85c;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+  }
+  
+  /* List Styling */
+  ul {
+    list-style-type: disc;
+    margin-left: 20px;
+  }
+  
+  li {
+    margin-bottom: 10px;
+  }
+  
+  /* Centered Content */
+  .text-center {
+    text-align: center;
+  }
+  
+  /* Media Queries */
+  @media (max-width: 768px) {
+    .container {
+      padding: 15px;
+    }
+  
+    button {
+      padding: 8px;
+      font-size: 13px;
+    }
+  
+    input, textarea {
+      padding: 8px;
+      font-size: 13px;
+    }
+  }
+  
