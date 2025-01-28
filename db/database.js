@@ -13,7 +13,7 @@ const db = new sqlite3.Database(dbPath, (err) => {
   }
 });
 
-// Helper function to run queries (INSERT, UPDATE, DELETE)
+// Helper function to run queries
 function runQuery(query, params = []) {
   return new Promise((resolve, reject) => {
     db.run(query, params, function (err) {
@@ -26,7 +26,7 @@ function runQuery(query, params = []) {
   });
 }
 
-// Helper function to fetch single row (SELECT)
+// Helper function to fetch single row(SELECT)
 function getQuery(query, params = []) {
   return new Promise((resolve, reject) => {
     db.get(query, params, (err, row) => {
