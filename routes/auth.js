@@ -22,7 +22,7 @@ router.post('/register', csrfProtection, async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    return res.status(400).json({ error: 'All fields are required' });
+    return res.render('register', { csrfToken: req.csrfToken(), error: 'All fields are required', success: '' });
   }
 
   try {
@@ -37,11 +37,15 @@ router.post('/register', csrfProtection, async (req, res) => {
     await runQuery('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
       [username, email, hashedPassword]);
 
-    res.status(201).json({ message: 'User registered successfully' });
+      return res.render('register', { 
+        csrfToken: req.csrfToken(), 
+        error: '', 
+        success: 'Registration successful! You can now <a href="/auth/login">log in</a>.' 
+      });
 
   } catch (error) {
     console.error('Registration Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.render('register', { csrfToken: req.csrfToken(), error: 'Internal Server Error', success: '' });
   }
 });
 

@@ -45,6 +45,11 @@
       </div>
     </form>
 
+    <!-- Success Message -->
+    <% if (typeof success !== "undefined" && success.length > 0) { %>
+      <p class="success"><%= success %></p>
+    <% } %>
+
     <!-- Error Messages -->
     <% if (typeof error !== "undefined" && error.length > 0) { %>
       <p class="error"><%= error %></p>
