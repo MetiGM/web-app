@@ -50,19 +50,29 @@ jobs:
           path: coverage/
 
   static-analysis:
-    name: Static Analysis with Codacy
+    name: Static Analysis with SonarQube
     needs: [build, test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Run Codacy Analysis
-        uses: codacy/codacy-analysis-cli-action@master
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+
+      - name: Save SonarQube Report
+        run: |
+          mkdir -p sonar-reports
+          cp -r .scannerwork/* sonar-reports/
+
+      - name: Upload SonarQube Report
+        uses: actions/upload-artifact@v4
         with:
-          project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          directory: ${{ github.workspace }}
-          verbose: true  
+          name: sonar-reports
+          path: sonar-reports/
 
   dynamic-analysis:
     name: Dynamic Analysis with OWASP ZAP
