@@ -15,12 +15,13 @@ jobs:
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - name: Install Dependencies
         run: npm ci
 
@@ -29,25 +30,32 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Fix Jest Permissions
         run: chmod +x node_modules/.bin/jest
+
       - name: Run Tests and Generate Logs
         run: |
           mkdir -p jest-logs
           npx jest --coverage > jest-logs/test-results.log
+
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
+
       - name: Upload Jest Test Logs
         uses: actions/upload-artifact@v4
         with:
@@ -59,8 +67,9 @@ jobs:
     needs: [build, test]
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Run Codacy Analysis
         uses: codacy/codacy-analysis-cli-action@v4
@@ -74,19 +83,17 @@ jobs:
           name: codacy-logs
           path: .
 
-
   dynamic-analysis:
     name: Dynamic Analysis with OWASP ZAP
-
     needs: [build, test]
     runs-on: ubuntu-latest
     steps:
 
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 18
 
