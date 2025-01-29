@@ -40,7 +40,7 @@ router.post('/register', csrfProtection, async (req, res) => {
       return res.render('register', { 
         csrfToken: req.csrfToken(), 
         error: '', 
-        success: 'Registration successful! You can now <a href="/auth/login">log in</a>.' 
+        success: 'Registration successful! You can now login.' 
       });
 
   } catch (error) {
