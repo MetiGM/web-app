@@ -9,12 +9,12 @@ const csrfProtection = csrf();
 
 // Render Registration Page
 router.get('/register', csrfProtection, (req, res) => {
-  res.render('register', { csrfToken: req.csrfToken() });
+  res.render('register', { csrfToken: req.csrfToken(), error:'' });
 });
 
 // Render Login Page
 router.get('/login', csrfProtection, (req, res) => {
-  res.render('login', { csrfToken: req.csrfToken() });
+  res.render('login', { csrfToken: req.csrfToken(), error: '' });
 });
 
 // Handle Registration
@@ -50,18 +50,18 @@ router.post('/login', csrfProtection, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
-    return res.status(400).json({ error: 'Email and password are required' });
+    return res.render('login', { csrfToken: req.csrfToken(), error: 'Email and password are required' });
   }
 
   try {
     const user = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
     if (!user) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.render('login', {csrfToken: req.csrfToken(), error: 'Invalid email or password'});
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.render('login', {csrfToken:req.csrfToken(), error: 'Invalid email or password' });
     }
 
     req.session.userId = user.id;
@@ -69,11 +69,11 @@ router.post('/login', csrfProtection, async (req, res) => {
     req.session.email = user.email;
     req.session.createdAt = user.created_at;
 
-    res.status(200).json({ message: 'Login successful' });
+    res.redirect('/profile');
 
   } catch (error) {
     console.error('Login Error:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.render('login', {csrfToken: req.csrfToken(), error: 'Internal Server Error' });
   }
 });
 
