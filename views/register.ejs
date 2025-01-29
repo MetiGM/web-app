@@ -5,57 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
   <link rel="stylesheet" href="/css/styles.css">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 30px;
+      margin-top: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 20px;
+      margin-bottom: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .success {
+      color: #28a745;
+      margin-top: 10px;
+    }
+
+    .error {
+      color: #d9534f;
+      margin-top: 10px;
+    }
+
+    p {
+      margin-top: 15px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
     <h1>Register</h1>
     <form action="/auth/register" method="POST">
-      <!-- CSRF Token (to be dynamically added if CSRF middleware is enabled) -->
       <% if (csrfToken) { %>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <% } %>
 
-      <!-- Username Input -->
       <div class="form-group">
         <label for="username">Username:</label>
         <input type="text" id="username" name="username" required placeholder="Enter your username">
       </div>
 
-      <!-- Email Input -->
       <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required placeholder="Enter your email">
       </div>
 
-      <!-- Password Input -->
       <div class="form-group">
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required placeholder="Enter your password">
       </div>
 
-      <!-- Confirm Password Input -->
       <div class="form-group">
         <label for="confirmPassword">Confirm Password:</label>
         <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Confirm your password">
       </div>
 
-      <!-- Submit Button -->
-      <div class="form-group">
-        <button type="submit">Register</button>
-      </div>
+      <button type="submit" class="btn">Register</button>
     </form>
 
-    <!-- Success Message -->
     <% if (typeof success !== "undefined" && success.length > 0) { %>
       <p class="success"><%= success %></p>
     <% } %>
 
-    <!-- Error Messages -->
     <% if (typeof error !== "undefined" && error.length > 0) { %>
       <p class="error"><%= error %></p>
     <% } %>
 
-    <!-- Redirect to Login -->
     <p>Already have an account? <a href="/auth/login">Login here</a>.</p>
   </div>
 </body>

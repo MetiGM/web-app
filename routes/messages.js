@@ -11,8 +11,8 @@ router.get('/', authMiddleware, csrfProtection, async (req, res) => {
   try {
     const userId = req.session.userId;
 
-    // Fetch user messages
-    const messages = await allQuery('SELECT content, created_at FROM messages WHERE user_id = ?', [userId]);
+    // Fetch user messages (order by created_at ASC, so latest is at the bottom)
+    const messages = await allQuery('SELECT content, created_at FROM messages WHERE user_id = ? ORDER BY created_at ASC', [userId]);
 
     res.json({ messages, csrfToken: req.csrfToken() });
 
@@ -36,15 +36,20 @@ router.post('/', authMiddleware, csrfProtection, async (req, res) => {
     await runQuery('INSERT INTO messages (user_id, content) VALUES (?, ?)', [userId, content.trim()]);
 
     // Fetch the latest message for immediate display
-    const latestMessage = await getQuery('SELECT content, created_at FROM messages WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [userId]);
+    const latestMessage = await allQuery('SELECT content, created_at FROM messages WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [userId]);
 
-    return res.status(201).json({ message: 'Message posted successfully', newMessage: latestMessage });
+    // Return the latest message to be appended on the client side
+    return res.status(201).json({ message: 'Message posted successfully', newMessage: latestMessage[0] });
 
   } catch (error) {
     console.error('Error posting message:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+
+
+
 
 
 module.exports = router;

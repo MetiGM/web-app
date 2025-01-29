@@ -4,11 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Profile</title>
-  <link rel="stylesheet" href="/css/styles.css">
+  <!-- <link rel="stylesheet" href="/css/styles.css"> -->
 </head>
 <body>
   <div class="container">
-    <h1>Welcome, <%= username %>!</h1>
+    <!-- Logout Button -->
+    <form action="/auth/logout" method="POST">
+      <!-- CSRF Token -->
+      <% if (csrfToken) { %>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <% } %>
+      <button type="submit" class="btn logout-btn">Logout</button>
+    </form>
+    <h1 class="title">Welcome, <%= username %>!</h1>
 
     <!-- User Details -->
     <div class="profile-details">
@@ -24,12 +32,12 @@
         <h2>Your Messages</h2>
         <ul id="messageList">
           <% messages.forEach((message) => { %>
-            <li><strong><%= message.created_at %>:</strong> <%= message.content %></li>
+            <li class="message-item"><strong><%= message.created_at %>:</strong> <%= message.content %></li>
           <% }) %>
         </ul>
       </div>
     <% } else { %>
-      <p>You have no messages yet.</p>
+      <p class="no-messages">You have no messages yet.</p>
     <% } %>
 
     <!-- Form to Add a Message -->
@@ -41,29 +49,140 @@
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <% } %>
         <textarea id="messageContent" name="content" rows="4" placeholder="Write your message here..." required></textarea>
-        <button type="submit">Submit</button>
+        <button type="submit" class="btn">Submit</button>
       </form>
     </div>
 
     <!-- Toast Notification -->
     <div id="toast" class="toast"></div>
 
-    <!-- Logout Button -->
-    <form action="/auth/logout" method="POST">
-      <!-- CSRF Token -->
-      <% if (csrfToken) { %>
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-      <% } %>
-      <button type="submit">Logout</button>
-    </form>
+    
   </div>
 
   <style>
-    /* Toast Notification Styling */
+    /* General Styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 700px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .title {
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    /* Profile Details */
+    .profile-details {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .profile-details h2 {
+      margin-bottom: 10px;
+      color: #1976d2;
+      font-size: 18px;
+    }
+
+    /* Messages */
+    .user-messages {
+      background: #f1f8e9;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .user-messages h2 {
+      margin-bottom: 10px;
+      color: #388e3c;
+      font-size: 18px;
+    }
+
+    .message-item {
+      background: #fff;
+      padding: 10px;
+      margin-bottom: 8px;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s;
+    }
+
+    .message-item:hover {
+      transform: scale(1.02);
+    }
+
+    .no-messages {
+      color: #757575;
+      font-style: italic;
+    }
+
+    /* Form */
+    .add-message {
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      resize: none;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .btn:hover {
+      background: #0056b3;
+    }
+
+    .logout-btn {
+      background: #d9534f;
+      margin-top: 10px;
+      float: right;
+    }
+
+    .logout-btn:hover {
+      background: #c9302c;
+    }
+
+    /* Toast Notification */
     .toast {
       visibility: hidden;
       min-width: 250px;
-      background-color: #4CAF50; /* Success color */
+      background-color: #4CAF50;
       color: white;
       text-align: center;
       border-radius: 5px;
@@ -90,11 +209,62 @@
       from { bottom: 30px; opacity: 1; }
       to { bottom: 0; opacity: 0; }
     }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 15px;
+      }
+
+      .title {
+        font-size: 20px;
+      }
+
+      .profile-details h2, .user-messages h2 {
+        font-size: 16px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        font-size: 12px;
+      }
+
+      textarea {
+        font-size: 12px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      .title {
+        font-size: 18px;
+      }
+
+      .profile-details, .user-messages {
+        padding: 10px;
+      }
+
+      .profile-details h2, .user-messages h2 {
+        font-size: 14px;
+      }
+
+      .btn {
+        padding: 6px 12px;
+        font-size: 10px;
+      }
+
+      textarea {
+        font-size: 10px;
+      }
+    }
   </style>
 
   <script>
     document.getElementById("messageForm").addEventListener("submit", async function (event) {
-      event.preventDefault(); // Prevent default form submission
+      event.preventDefault();
 
       const content = document.getElementById("messageContent").value;
       const csrfToken = document.querySelector("input[name='_csrf']").value;
@@ -111,34 +281,27 @@
         const result = await response.json();
 
         if (response.ok) {
-          showToast(result.message); // Show popup success message
-
-          // Append the new message to the list
+          showToast(result.message);
           const messageList = document.getElementById("messageList");
           const newMessageItem = document.createElement("li");
+          newMessageItem.className = "message-item";
           newMessageItem.innerHTML = `<strong>${result.newMessage.created_at}:</strong> ${result.newMessage.content}`;
-          messageList.prepend(newMessageItem); // Add message to the top of the list
-
-          // Clear the input field
+          messageList.prepend(newMessageItem);
           document.getElementById("messageContent").value = "";
         } else {
-          showToast(result.error, true); // Show error message in red
+          showToast(result.error, true);
         }
       } catch (error) {
-        console.error("Error:", error);
         showToast("Failed to post message", true);
       }
     });
 
-    // Function to show toast notification
     function showToast(message, isError = false) {
       const toast = document.getElementById("toast");
       toast.textContent = message;
-      toast.style.backgroundColor = isError ? "#d9534f" : "#4CAF50"; // Red for error, green for success
+      toast.style.backgroundColor = isError ? "#d9534f" : "#4CAF50";
       toast.classList.add("show");
-      setTimeout(() => {
-        toast.classList.remove("show");
-      }, 3000); // Hide after 3 seconds
+      setTimeout(() => { toast.classList.remove("show"); }, 3000);
     }
   </script>
 </body>
