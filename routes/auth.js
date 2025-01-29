@@ -85,9 +85,10 @@ router.post('/login', csrfProtection, async (req, res) => {
 router.post('/logout', csrfProtection, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      return res.status(500).json({ error: 'Failed to log out' });
+      console.error('Logout Error:', err);
+      return res.status(500).render('error', { message: 'Failed to log out', statusCode: 500 });
     }
-    res.status(200).json({ message: 'Logged out successfully' });
+    res.redirect('/auth/login'); // Redirect to login page after logout
   });
 });
 
