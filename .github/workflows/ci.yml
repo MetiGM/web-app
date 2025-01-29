@@ -57,10 +57,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Debug SonarQube URL
+        run: echo "Using SonarQube at ${{ secrets.SONAR_HOST_URL }}"
+
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v2
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
 
       - name: Save SonarQube Report
