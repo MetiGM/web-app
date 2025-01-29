@@ -41,13 +41,13 @@ jobs:
         run: npm ci
 
       - name: Run Tests
-        run: npm test -- --coverage
+        run: npm test -- --coverage > sonar_result.txt
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
-          path: coverage/
+          path: sonar_result.txt
 
   static-analysis:
     name: Static Analysis with SonarQube
@@ -57,14 +57,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Debug SonarQube URL
-        run: echo "Using SonarQube at ${{ secrets.SONAR_HOST_URL }}"
-
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v2
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
-          PROJECT_TOKEN: ${{ secrets.PROJECT_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.projectKey=MetiGM:web-app
+            -Dsonar.organization=metigm
+            -Dsonar.python.coverage.reportPaths=sonar_result.txt 
+            -Dsonar.qualitygate.wait=${{ github.ref == 'refs/heads/main' }}
+            -Dsonar.branch.name=${{ github.ref_name }}
+            ${{ github.ref != 'refs/heads/main' && '-Dsonar.branch.target=main' || '' }}
 
       - name: Save SonarQube Report
         run: |
