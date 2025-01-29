@@ -1,14 +1,16 @@
 const express = require('express');
 const { getQuery, allQuery } = require('../db/database');
 const authMiddleware = require('../middleware/auth');
+const csrf = require('csurf');
 
 const router = express.Router();
+const csrfProtection = csrf();
 
 // Profile Route (Requires Authentication)
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/', authMiddleware, csrfProtection, async (req, res) => {
   try {
     const userId = req.session.userId;
-    
+
     // Fetch user details
     const user = await getQuery('SELECT username, email, created_at FROM users WHERE id = ?', [userId]);
 
@@ -25,7 +27,7 @@ router.get('/', authMiddleware, async (req, res) => {
       email: user.email,
       createdAt: user.created_at,
       messages: messages,
-      csrfToken: req.csrfToken ? req.csrfToken() : null, // If using CSRF protection
+      csrfToken: req.csrfToken(),
     });
 
   } catch (error) {

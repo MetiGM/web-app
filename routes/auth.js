@@ -3,63 +3,82 @@ const bcrypt = require('bcryptjs');
 const { runQuery, getQuery } = require('../db/database');
 const router = express.Router();
 
-// User Registration
-router.post('/register', async (req, res) => {
+// Middleware for CSRF protection
+const csrf = require('csurf');
+const csrfProtection = csrf();
+
+// Render Registration Page
+router.get('/register', csrfProtection, (req, res) => {
+  res.render('register', { csrfToken: req.csrfToken() });
+});
+
+// Render Login Page
+router.get('/login', csrfProtection, (req, res) => {
+  res.render('login', { csrfToken: req.csrfToken() });
+});
+
+// Handle Registration
+router.post('/register', csrfProtection, async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
     return res.status(400).json({ error: 'All fields are required' });
   }
 
-  // Check if user already exists
-  const existingUser = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
-  if (existingUser) {
-    return res.status(400).json({ error: 'Email already in use' });
-  }
-
-  // Hash password
-  const hashedPassword = await bcrypt.hash(password, 10);
-
   try {
-    // Insert new user
-    const result = await runQuery('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
-    [username, email, hashedPassword]);
+    const existingUser = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already in use' });
+    }
 
-    res.status(201).json({ message: 'User registered successfully', userId: result.id });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    await runQuery('INSERT INTO users (username, email, password) VALUES (?, ?, ?)', 
+      [username, email, hashedPassword]);
+
+    res.status(201).json({ message: 'User registered successfully' });
+
   } catch (error) {
-    res.status(500).json({ error: 'An error occurred during registration' });
+    console.error('Registration Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
-// User Login
-router.post('/login', async (req, res) => {
+// Handle Login
+router.post('/login', csrfProtection, async (req, res) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ error: 'Email and password are required' });
   }
 
-  // Fetch user from database
-  const user = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
-  if (!user) {
-    return res.status(400).json({ error: 'Invalid email or password' });
+  try {
+    const user = await getQuery('SELECT * FROM users WHERE email = ?', [email]);
+    if (!user) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      return res.status(400).json({ error: 'Invalid email or password' });
+    }
+
+    req.session.userId = user.id;
+    req.session.username = user.username;
+    req.session.email = user.email;
+    req.session.createdAt = user.created_at;
+
+    res.status(200).json({ message: 'Login successful' });
+
+  } catch (error) {
+    console.error('Login Error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  // Compare password
-  const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) {
-    return res.status(400).json({ error: 'Invalid email or password' });
-  }
-
-  // Store session
-  req.session.userId = user.id;
-  req.session.username = user.username;
-
-  res.status(200).json({ message: 'Login successful' });
 });
 
-// User Logout
-router.post('/logout', (req, res) => {
+// Handle Logout (CSRF Protected)
+router.post('/logout', csrfProtection, (req, res) => {
   req.session.destroy((err) => {
     if (err) {
       return res.status(500).json({ error: 'Failed to log out' });

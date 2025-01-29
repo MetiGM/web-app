@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/styles.css">
 </head>
 <body>
   <div class="container">
     <h1>Login</h1>
     <form action="/auth/login" method="POST">
-      <!-- CSRF Token (to be added dynamically if CSRF middleware is enabled) -->
+      <!-- CSRF Token -->
       <% if (csrfToken) { %>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <% } %>
@@ -34,7 +34,7 @@
     </form>
 
     <!-- Error Messages -->
-    <% if (error) { %>
+    <% if (error && error.length > 0) { %>
       <p class="error-message"><%= error %></p>
     <% } %>
 
