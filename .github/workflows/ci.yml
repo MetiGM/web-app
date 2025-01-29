@@ -1,4 +1,4 @@
-name: CI/CD Pipeline with Build, Test, Static Analysis (Codacy), and Dynamic Analysis (OWASP ZAP)
+name: CI/CD Pipeline with Build, Test, Static & Dynamic Analysis
 
 on:
   push:
@@ -25,40 +25,29 @@ jobs:
         run: npm ci
 
   test:
-    name: Run Unit Tests and Generate Coverage
+    name: Run Unit Tests
     needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
-      
+
       - name: Install Dependencies
         run: npm ci
 
-      - name: Fix Jest Permissions
-        run: chmod +x node_modules/.bin/jest
-
-      - name: Run Tests and Generate Logs
-        run: |
-          mkdir -p jest-logs
-          npx jest --coverage > jest-logs/test-results.log
+      - name: Run Tests
+        run: npm test -- --coverage
 
       - name: Upload Coverage Report
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/
-
-      - name: Upload Jest Test Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: jest-logs
-          path: jest-logs/test-results.log
 
   static-analysis:
     name: Static Analysis with Codacy
@@ -72,14 +61,8 @@ jobs:
         uses: codacy/codacy-analysis-cli-action@master
         with:
           project-token: ${{ secrets.CODACY_PROJECT_TOKEN }}
-          directory: ${{ github.workspace }}  # ✅ Fixed absolute path issue
-          debug: true  # ✅ Enables better debugging logs
-
-      - name: Upload Codacy Report Logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: codacy-logs
-          path: .
+          directory: ${{ github.workspace }}
+          verbose: true  
 
   dynamic-analysis:
     name: Dynamic Analysis with OWASP ZAP
@@ -100,7 +83,7 @@ jobs:
       - name: Start Application
         run: |
           npm start &
-          sleep 15  # ⏳ Wait to ensure app is ready before OWASP ZAP scan
+          sleep 15  # Ensure app is fully ready
 
       - name: OWASP ZAP Scan
         uses: zaproxy/action-full-scan@v0.12.0
@@ -109,9 +92,7 @@ jobs:
           cmd_options: '-r'
 
       - name: Save ZAP Reports
-        run: |
-          mkdir -p zap-reports
-          cp /zap/wrk/* zap-reports/
+        run: mkdir -p zap-reports && cp /zap/wrk/* zap-reports/
 
       - name: Upload ZAP Reports
         uses: actions/upload-artifact@v4
