@@ -35,12 +35,16 @@ router.post('/', authMiddleware, csrfProtection, async (req, res) => {
     // Insert message into database
     await runQuery('INSERT INTO messages (user_id, content) VALUES (?, ?)', [userId, content.trim()]);
 
-    res.status(201).json({ message: 'Message posted successfully' });
+    // Fetch the latest message for immediate display
+    const latestMessage = await getQuery('SELECT content, created_at FROM messages WHERE user_id = ? ORDER BY created_at DESC LIMIT 1', [userId]);
+
+    return res.status(201).json({ message: 'Message posted successfully', newMessage: latestMessage });
 
   } catch (error) {
     console.error('Error posting message:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 module.exports = router;
